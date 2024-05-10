@@ -1,45 +1,41 @@
-const form = document.querySelector("[data-form]");
-const result = document.querySelector("[data-result]");
-const body = document.querySelector("body"); // Select the body element
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("[data-form]");
+  const result = document.querySelector("[data-result]");
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const entries = new FormData(event.target);
-  const { dividend, divider } = Object.fromEntries(entries);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-  // Convert dividend and divider to numbers
-  const dividendNum = parseFloat(dividend);
-  const dividerNum = parseFloat(divider);
+    // Get the input values
+    const dividend = parseFloat(form.elements["dividend"].value);
+    const divider = parseFloat(form.elements["divider"].value);
 
-  // Validation when values are missing
-  if (dividend.trim() === "" || divider.trim() === "") {
-    // If either dividend or divider is empty dispaly an error message
-    result.innerText =
-      "Division not performed. Both values are required in inputs. Try again";
-    return;
-  }
+    // Check if inputs are valid numbers
+    if (isNaN(dividend) || isNaN(divider)) {
+      result.innerText = "Invalid input. Please enter valid numbers.";
+      return;
+    }
 
-  // Check if either dividend or divider is not a number
-  if (isNaN(dividendNum) || isNaN(dividerNum)) {
-    // Replace the entire screen with an error message
-    body.innerHTML =
-      "<h1>Something critical went wrong. Please reload the page.</h1>";
-    // Log an error in the browser console with call stack
-    console.error(
-      "Something critical went wrong. Please reload the page",
-      new Error().stack
-    );
-  }
+    // Check if any input value is empty
+    if (dividend === "" || divider === "") {
+      result.innerText = "Division not performed. Both values are required in inputs. Try again.";
+      return;
+    }
 
-  // Check if divider is zero
-  if (dividerNum === 0) {
-    console.error("Division not performed. Invalid number provided. Try again");
-    result.innerText =
-      "Division not performed. Invalid number provided. Try again";
-    return;
-  }
+    // Check if divider is zero
+    if (divider === 0) {
+      result.innerText = "Division not performed. Invalid number provided. Try again.";
+      console.error("Error: Division by zero");
+      return;
+    }
 
-  // Perfom division
-  const divisionResult = dividend / divider;
-  result.innerText = Math.trunc(divisionResult); // Use Math.trunc() to remove decimal part
+    // Perform division
+    const divisionResult = dividend / divider;
+
+    // Check if result is a whole number
+    if (Number.isInteger(divisionResult)) {
+      result.innerText = divisionResult;
+    } else {
+      result.innerText = "Division result is not a whole number.";
+    }
+  });
 });
